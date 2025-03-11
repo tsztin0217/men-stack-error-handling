@@ -10,32 +10,22 @@ router.get('/new', (req, res) => {
 
 
 
+
 // controllers/fruits.js
 router.post("/", async (req, res) => {
   try {
     if (!req.body.name.trim()) {
-      throw new Error("Invalid input: The name field cannot be empty!");
-    }
+       throw new Error("Invalid input: The name field cannot be empty!");
+  }
     await Fruit.create(req.body);
+    req.session.message = "Fruit successfully created.";
     res.redirect("/fruits");
   } catch (err) {
-    res.render("error.ejs", { msg: err.message });
+    console.log(err.message)
+    req.session.message = err.message;
+    res.redirect("/fruits");
   }
 });
-
-// controllers/fruits.js
-router.post("/", async (req, res) => {
-    try {
-      await Fruit.create(req.body);
-      req.session.message = "Fruit successfully created.";
-      res.redirect("/fruits");
-    } catch (err) {
-      req.session.message = err.message;
-      res.redirect("/fruits");
-    }
-  });
-  
-
 
   
 

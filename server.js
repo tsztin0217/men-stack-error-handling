@@ -28,6 +28,15 @@ app.use(
   })
 );
 
+// this must be beforr app.use('/fruits')
+app.use((req, res, next) => {
+  if (req.session.message) {
+    res.locals.message = req.session.message;
+    req.session.message = null;
+  }
+  next();
+});
+
 app.get('/', (req, res) => {
   res.render('index.ejs', {
     user: req.session.user,
@@ -42,28 +51,11 @@ app.get('/vip-lounge', (req, res) => {
   }
 });
 
+
+
 app.use('/auth', authController);
 app.use('/fruits', fruitsController); // add this
 
-
-
-// server.js
-app.get('*', function (req, res) {
-  res.status(404).render('error.ejs', {
-    msg: 'Route not found!',
-  });
-});
-
-
-
-// server.js
-app.use((req, res, next) => {
-  if (req.session.message) {
-    res.locals.message = req.session.message;
-    req.session.message = null;
-  }
-  next();
-});
 
 
 const handleServerError = (err) => {
@@ -74,6 +66,14 @@ const handleServerError = (err) => {
   }
 }
 
+
+app.get('*', function (req, res) {
+  res.status(404).render('error.ejs', {
+    msg: 'Route not found!',
+  });
+});
+
+
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);
-}).on('error', handleServerError);
+}).on('error',  handleServerError);
